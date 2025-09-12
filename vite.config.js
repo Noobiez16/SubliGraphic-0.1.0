@@ -4,8 +4,9 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // CRITICAL: This base path tells Vite where the project will live.
-  // By setting it to './', all asset paths will be relative, making the
-  // deployment independent of the repository name.
-  base: './', 
+  // --- CORRECCIÓN CRÍTICA ---
+  // Le decimos a Vite que la base del proyecto en producción
+  // será el nombre del repositorio.
+  base: '/SubliGraphic-0.1.0/', 
 })
+

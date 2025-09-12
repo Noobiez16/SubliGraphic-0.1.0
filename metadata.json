@@ -1,5 +1,5 @@
 {
-  "name": "SubliGraphic",
+  "name": "SubliGraphic-0.1.0",
   "description": "An e-commerce storefront for customizable mugs and tumblers, featuring a dynamic UI that adapts its visual theme based on the user's operating system (iOS or Android).",
   "requestFramePermissions": []
 }
