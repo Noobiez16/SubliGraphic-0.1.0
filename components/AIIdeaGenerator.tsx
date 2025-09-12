@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-// DO NOT import the @google/genai library.
+import { GoogleGenAI } from '@google/genai';
 
 type Theme = 'ios' | 'android';
 
@@ -11,9 +10,6 @@ interface AIIdeaGeneratorProps {
 const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     
-    // Using the hardcoded API key as per critical directive.
-    const apiKey = "AIzaSyBK9nERnDLsFc3me9psO-RX-T6wuGo2eWE";
-
     const [prompt, setPrompt] = useState('');
     const [response, setResponse] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -32,57 +28,30 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
         setResponse('');
         setCopyButtonText('Copy Idea');
 
-        // Construct the URL with the mandatory proxy and 'gemini-pro' model.
-        const originalApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-        const proxyUrl = 'https://corsproxy.io/?';
-        const apiUrl = proxyUrl + originalApiUrl;
-
-        // Combine system instruction and user prompt.
-        const systemInstruction = "You are a creative assistant specializing in unique and fun ideas for custom mug designs. Provide 3 concise and distinct ideas in a numbered list. The ideas should be visual and easy to describe. Do not use markdown. Here is the user's request:";
-        const fullPrompt = `${systemInstruction}\n\n${prompt}`;
-        
-        const payload = {
-            contents: [{ parts: [{ text: fullPrompt }] }],
-        };
-
         try {
-            const apiResponse = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest' // Required by some proxies
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!apiResponse.ok) {
-                 const errorText = await apiResponse.text();
-                 try {
-                     const errorJson = JSON.parse(errorText);
-                     const errorMessage = errorJson?.error?.message || `API Error: ${apiResponse.status}`;
-                     throw new Error(errorMessage);
-                 } catch (parseError) {
-                     // If parsing fails, the error is likely from the proxy itself
-                     throw new Error(`Proxy or network error: ${apiResponse.status}. Please check the proxy's status or try again.`);
-                 }
-            }
+            // API Key is sourced from `process.env.API_KEY` as per guidelines.
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
-            const result = await apiResponse.json();
-            const ideaText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            const systemInstruction = "You are a creative assistant specializing in unique and fun ideas for custom mug designs. Provide 3 concise and distinct ideas in a numbered list. The ideas should be visual and easy to describe. Do not use markdown.";
+            
+            const result = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+                config: {
+                    systemInstruction: systemInstruction,
+                },
+            });
+            
+            const ideaText = result.text;
 
             if (ideaText) {
                 setResponse(ideaText);
             } else {
-                // If the response is still empty, it might have been blocked by safety filters.
-                setError('The response was blocked by safety filters. Try a different or more specific prompt.');
+                setError('The response was empty or blocked. Please try a different or more specific prompt.');
             }
         } catch (err: any) {
             console.error('Error calling Gemini API:', err);
-             if (err.message.includes('API key not valid')) {
-                setError('The provided API key is not valid. Please check it in the code.');
-            } else {
-                setError(`An error occurred: ${err.message}`);
-            }
+            setError(`An error occurred: ${err.message}`);
         } finally {
             setIsLoading(false);
         }
@@ -121,7 +90,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
                     {isIOS ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
                     ) : (
-                        <svg xmlns="http://www.w.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9l1.25-2.5L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9l1.25-2.5L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"/></svg>
                     )}
                 </div>
             </button>

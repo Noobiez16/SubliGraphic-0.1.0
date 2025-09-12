@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   // CRITICAL: This base path tells Vite where the project will live.
-  // It ensures all asset paths (CSS, JS, images) are generated correctly.
-  base: '/SubliGraphic-0.0.1/', 
+  // By setting it to './', all asset paths will be relative, making the
+  // deployment independent of the repository name.
+  base: './', 
 })

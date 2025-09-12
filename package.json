@@ -1,8 +1,8 @@
 {
   "name": "subligraphic-project",
   "private": true,
-  "version": "0.0.1",
-  "homepage": "https://Noobiez16.github.io/SubliGraphic-0.0.1",
+  "version": "0.1.0",
+  "homepage": "https://Noobiez16.github.io/SubliGraphic-0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@google/genai": "^0.18.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
