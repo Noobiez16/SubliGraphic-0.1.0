@@ -1,53 +1,62 @@
 import React, { useState } from 'react';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, Modality } from '@google/genai';
+import Button from './Button';
+import type { Product } from '../types';
 
 type Theme = 'ios' | 'android';
 
 interface AIIdeaGeneratorProps {
     theme: Theme;
+    products: Product[];
+    onAddToCartWithDesign: (baseProduct: Product, designUrl: string) => void;
 }
 
-const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
+const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAddToCartWithDesign }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     const [prompt, setPrompt] = useState('');
-    const [response, setResponse] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const [copyButtonText, setCopyButtonText] = useState('Copy Idea');
+    const [showMugPreview, setShowMugPreview] = useState(false);
+    const [isProductSelectorOpen, setIsProductSelectorOpen] = useState(false);
 
     const isIOS = theme === 'ios';
 
     const handleGenerate = async () => {
         if (!prompt) {
-            setError('Please enter a prompt to start.');
+            setError('Please enter a description for your design.');
             return;
         }
         setIsLoading(true);
         setError('');
-        setResponse('');
-        setCopyButtonText('Copy Idea');
+        setImageUrl('');
+        setShowMugPreview(false);
+        setIsProductSelectorOpen(false);
 
         try {
-            // API Key is sourced from `process.env.API_KEY` as per guidelines.
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
             
-            const systemInstruction = "You are a creative assistant specializing in unique and fun ideas for custom mug designs. Provide 3 concise and distinct ideas in a numbered list. The ideas should be visual and easy to describe. Do not use markdown.";
+            const systemInstruction = "Create a vibrant, high-quality image based on the following description. The style should be suitable for printing on a mug or cup. The design should be clear, centered, and visually appealing, with a simple background.";
             
             const result = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: prompt,
+                model: 'gemini-2.5-flash-image-preview',
+                contents: {
+                    parts: [{ text: `${systemInstruction}\n\nDescription: ${prompt}` }]
+                },
                 config: {
-                    systemInstruction: systemInstruction,
+                    responseModalities: [Modality.IMAGE, Modality.TEXT],
                 },
             });
-            
-            const ideaText = result.text;
 
-            if (ideaText) {
-                setResponse(ideaText);
+            const imagePart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+            const base64Data = imagePart?.inlineData?.data;
+
+            if (base64Data) {
+                const generatedUrl = `data:image/png;base64,${base64Data}`;
+                setImageUrl(generatedUrl);
             } else {
-                setError('The response was empty or blocked. Please try a different or more specific prompt.');
+                setError('Could not generate an image from the prompt. Please try being more specific.');
             }
         } catch (err: any) {
             console.error('Error calling Gemini API:', err);
@@ -57,20 +66,6 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
         }
     };
     
-    const handleCopy = async () => {
-        if (!response) return;
-        try {
-            await navigator.clipboard.writeText(response);
-            setCopyButtonText('Copied!');
-            setTimeout(() => setCopyButtonText('Copy Idea'), 2000);
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-            setCopyButtonText('Copy Failed');
-             setTimeout(() => setCopyButtonText('Copy Idea'), 2000);
-        }
-    };
-
-    const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
     const fabClasses = isIOS ? 'bg-white/70 backdrop-blur-[15px] border border-black/5' : 'bg-[--color-primary] shadow-lg';
@@ -85,7 +80,20 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
 
     return (
         <>
-            <button id="ai-fab" onClick={openModal} className={`fixed bottom-5 right-5 h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[999] transition-transform hover:scale-105 ${fabClasses}`} aria-label="Generate idea with AI" >
+            <style>{`
+                @keyframes spin360 {
+                    from {
+                        background-position: 0 0;
+                        mask-position: 0 0;
+                    }
+                    to {
+                        background-position: -4640px 0; 
+                        mask-position: -4640px 0;
+                    }
+                }
+            `}</style>
+        
+            <button id="ai-fab" onClick={() => setIsModalOpen(!isModalOpen)} className={`fixed bottom-5 right-5 h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[999] transition-transform hover:scale-105 ${fabClasses}`} aria-label="Generate design with AI" >
                 <div className={fabIconColor}>
                     {isIOS ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
@@ -105,24 +113,87 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
                   onClick={(e) => e.stopPropagation()} 
                   className={`relative w-full max-w-lg p-6 ${modalContentClasses} transform transition-all duration-300 ease-in-out md:origin-bottom-right ${isModalOpen ? 'scale-100' : 'scale-95'}`}
                 >
-                    <button id="ai-modal-close" onClick={closeModal} className={`absolute top-2 right-4 text-3xl cursor-pointer ${subTextColor}`} >&times;</button>
-                    <h2 className={`text-2xl font-bold mt-0 ${textColor}`}>No Ideas?...</h2>
-                    <p className={`mb-4 ${subTextColor}`}>Describe what you're looking for...</p>
-                    <textarea id="ai-prompt-input" value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Ex: 'A fun design for my dad's birthday, he's a programmer'" className={`w-full min-h-[100px] rounded-lg border p-3 text-base resize-vertical mb-4 text-[#212529] ${textAreaThemeClasses}`} ></textarea>
-                    <button id="ai-generate-btn" onClick={handleGenerate} disabled={isLoading} className={`w-full py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-primary] text-[--color-on-primary] disabled:bg-gray-400 disabled:cursor-not-allowed`} >
-                        {isLoading ? 'Thinking...' : 'Generate Ideas'}
-                    </button>
-                    {(error || response) && (
-                        <div id="ai-response-area" className={`mt-4 p-4 rounded-lg min-h-[50px] whitespace-pre-wrap ${isIOS ? 'bg-black/5' : 'bg-gray-100'}`}>
-                            {error && <p className="text-red-500">{error}</p>}
-                            {response && <p className={`${textColor}`}>{response}</p>}
+                    <div className="relative w-full min-h-[400px] flex flex-col">
+                        <div className={`relative transition-opacity duration-300 ${isLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                            <h2 className={`text-2xl font-bold mt-0 ${textColor}`}>AI Design Generator</h2>
+                            <p className={`mb-4 ${subTextColor}`}>Describe the design you want to create.</p>
+                            <div 
+                                id="ai-prompt-input" 
+                                contentEditable 
+                                onInput={(e) => setPrompt(e.currentTarget.textContent || '')} 
+                                data-placeholder="Ex: 'An astronaut surfing on a cosmic coffee wave'" 
+                                className={`w-full min-h-[44px] max-h-48 overflow-y-auto rounded-lg border p-3 text-base resize-none mb-4 text-[#212529] ${textAreaThemeClasses} empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400`}
+                            ></div>
+                            <button id="ai-generate-btn" onClick={handleGenerate} disabled={isLoading} className={`w-full py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-primary] text-[--color-on-primary] disabled:bg-gray-400 disabled:cursor-not-allowed`} >
+                                Generate Design
+                            </button>
+                            
+                            <div id="ai-response-area" className={`mt-4 flex flex-col items-center justify-center min-h-[250px] p-4 rounded-lg ${isIOS ? 'bg-black/5' : 'bg-gray-100'}`}>
+                                {error ? (
+                                    <p className="text-red-500 text-center">{error}</p>
+                                ) : imageUrl ? (
+                                    showMugPreview ? (
+                                        <div className="w-full flex flex-col items-center">
+                                            <h4 className="font-semibold text-center mb-2">360 Preview</h4>
+                                            <div className="relative w-64 h-64">
+                                                <div className="absolute inset-0 w-full h-full bg-no-repeat" style={{ backgroundImage: `url('https://i.imgur.com/2q2G51g.png')`, backgroundSize: 'auto 100%', animation: `spin360 4s steps(29) infinite`}}></div>
+                                                <div className="absolute inset-0 w-full h-full" style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', maskImage: `url('https://i.imgur.com/2q2G51g.png')`, maskSize: 'auto 100%', maskMode: 'alpha', animation: `spin360 4s steps(29) infinite`}}></div>
+                                            </div>
+                                            <div className="flex justify-center mt-4">
+                                                <button onClick={() => setShowMugPreview(false)} className={`py-2 px-5 rounded-full font-semibold text-sm ${isIOS ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-gray-200 text-black hover:bg-gray-300'}`}>
+                                                    Back to Layout
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center w-full">
+                                            <h4 className={`font-semibold text-center mb-2 ${textColor}`}>Your Design</h4>
+                                            <img src={imageUrl} alt="AI-generated Design" className="rounded-lg shadow-lg w-full max-w-xs mx-auto aspect-square object-cover" />
+                                            <div className="flex justify-center items-center gap-3 mt-4">
+                                                <Button onClick={() => setShowMugPreview(true)} theme={theme} size="sm">
+                                                    Mug Preview
+                                                </Button>
+                                                <Button onClick={() => setIsProductSelectorOpen(true)} theme={theme} size="sm" className="!bg-[--color-secondary] hover:opacity-90">
+                                                    Add to Cart
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )
+                                ) : ( 
+                                    <p className={`text-center ${subTextColor}`}>Your generated design will appear here.</p> 
+                                )}
+                            </div>
+                             {isProductSelectorOpen && (
+                                <div className="absolute inset-0 bg-white/80 backdrop-blur-md flex flex-col p-4 rounded-2xl z-20">
+                                    <h3 className="text-center font-bold mb-2 text-black">Select a Product</h3>
+                                    <div className="overflow-y-auto space-y-2 flex-grow">
+                                        {products.map(product => (
+                                            <button 
+                                                key={product.id} 
+                                                onClick={() => {
+                                                    onAddToCartWithDesign(product, imageUrl);
+                                                    setIsProductSelectorOpen(false);
+                                                }}
+                                                className="w-full flex items-center p-2 rounded-lg hover:bg-gray-200/80 transition-colors text-left"
+                                            >
+                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-md mr-3 object-cover" />
+                                                <span className="font-medium text-black">{product.name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button onClick={() => setIsProductSelectorOpen(false)} className="mt-2 pt-2 text-sm text-gray-600 hover:text-black">Cancel</button>
+                                </div>
+                            )}
                         </div>
-                    )}
-                    {response && !error && (
-                        <button id="ai-copy-btn" onClick={handleCopy} className="w-full mt-3 py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-secondary] text-[--color-on-primary]" >
-                            {copyButtonText}
-                        </button>
-                    )}
+
+                        <div className={`absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-300 ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}> 
+                            <svg className="animate-spin h-10 w-10 text-[--color-primary]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"> 
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle> 
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p className="mt-4 text-[--color-on-surface-variant]">Generating your artwork...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

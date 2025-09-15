@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useThemeDetector } from './hooks/useThemeDetector';
 import type { Product, CartItem } from './types';
@@ -8,6 +9,7 @@ import ProductCard from './components/ProductCard';
 import Button from './components/Button';
 import AIIdeaGenerator from './components/AIIdeaGenerator';
 import Footer from './components/Footer';
+import CheckoutView, { OrderConfirmation } from './components/CheckoutView';
 
 // ProductDetail component
 interface ProductDetailProps {
@@ -61,11 +63,12 @@ interface CartViewProps {
     cart: CartItem[];
     onClose: () => void;
     onUpdateQuantity: (productId: number, newQuantity: number) => void;
+    onCheckout: () => void;
     theme: 'ios' | 'android';
     isOpen: boolean;
 }
 
-const CartView: React.FC<CartViewProps> = ({ cart, onClose, onUpdateQuantity, theme, isOpen }) => {
+const CartView: React.FC<CartViewProps> = ({ cart, onClose, onUpdateQuantity, onCheckout, theme, isOpen }) => {
     const isIOS = theme === 'ios';
 
     const containerClasses = isIOS 
@@ -117,7 +120,7 @@ const CartView: React.FC<CartViewProps> = ({ cart, onClose, onUpdateQuantity, th
             </div>
             
             <Button 
-                onClick={() => alert('Checkout is not implemented yet.')} 
+                onClick={onCheckout} 
                 theme={theme} 
                 className="w-full !rounded-full font-bold py-3.5 text-base hover:scale-105"
                 disabled={cart.length === 0}
@@ -133,32 +136,73 @@ export default function App() {
   const theme = useThemeDetector();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [currentView, setCurrentView] = useState('store'); // 'store', 'cart', 'checkout', 'confirmation'
 
-  // Load cart from localStorage on initial render
+  // Load cart from localStorage on initial render, rehydrating custom images
   useEffect(() => {
     try {
-      const savedCart = localStorage.getItem('subligraphic_cart');
-      if (savedCart) {
-        setCart(JSON.parse(savedCart));
+      const savedCartJson = localStorage.getItem('subligraphic_cart');
+      if (savedCartJson) {
+        const cartFromStorage: CartItem[] = JSON.parse(savedCartJson);
+        
+        const hydratedCart = cartFromStorage.map(item => {
+          if (item.customDesignUrl && item.customDesignUrl.startsWith('ref:')) {
+            const imageId = item.customDesignUrl.substring(4);
+            const imageData = localStorage.getItem(`custom_design_${imageId}`);
+            if (imageData) {
+              return { ...item, imageUrl: imageData, customDesignUrl: imageData };
+            }
+          }
+          return item;
+        });
+        setCart(hydratedCart);
       }
     } catch (error) {
       console.error("Failed to load cart from localStorage", error);
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes, separating custom images to avoid quota errors
   useEffect(() => {
+    // Don't save an empty cart to localStorage
+    if (cart.length === 0) {
+      const savedCart = localStorage.getItem('subligraphic_cart');
+      if (savedCart) {
+        localStorage.removeItem('subligraphic_cart');
+      }
+      return;
+    }
+
     try {
-      localStorage.setItem('subligraphic_cart', JSON.stringify(cart));
+      const cartToSave = cart.map(item => {
+        if (item.customDesignUrl && item.customDesignUrl.startsWith('data:image')) {
+          localStorage.setItem(`custom_design_${item.id}`, item.customDesignUrl);
+          return { ...item, imageUrl: `ref:${item.id}`, customDesignUrl: `ref:${item.id}` };
+        }
+        return item;
+      });
+      
+      localStorage.setItem('subligraphic_cart', JSON.stringify(cartToSave));
+      
+      const currentCustomItemIds = new Set(cart.filter(item => item.customDesignUrl).map(item => String(item.id)));
+      for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('custom_design_')) {
+              const idFromKey = key.substring(14);
+              if (!currentCustomItemIds.has(idFromKey)) {
+                  localStorage.removeItem(key);
+              }
+          }
+      }
     } catch (error) {
         console.error("Failed to save cart to localStorage", error);
+        alert("Error: Could not save your item. Your browser's storage might be full.");
     }
   }, [cart]);
 
   const handleProductSelect = (product: Product) => {
     setSelectedProduct(product);
-    setIsCartOpen(false);
+    setCurrentView('store');
   };
 
   const handleBack = () => {
@@ -166,44 +210,56 @@ export default function App() {
   };
 
   const handleCartClick = () => {
-    setIsCartOpen(!isCartOpen);
     setSelectedProduct(null);
+    setCurrentView(currentView === 'cart' ? 'store' : 'cart');
   };
-
-  const handleCloseCart = () => {
-    setIsCartOpen(false);
-  }
 
   const handleAddToCart = (productToAdd: Product) => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === productToAdd.id);
+      const existingItem = prevCart.find(item => item.id === productToAdd.id && !item.customDesignUrl);
       if (existingItem) {
-        // Increment quantity
         return prevCart.map(item =>
           item.id === productToAdd.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
-        // Add new item
         return [...prevCart, { ...productToAdd, quantity: 1 }];
       }
     });
   };
   
+  const handleAddToCartWithDesign = (baseProduct: Product, designUrl: string) => {
+    setCart(prevCart => {
+        const newItem: CartItem = {
+            ...baseProduct,
+            id: Date.now(), // Use timestamp as a unique ID for custom items
+            name: `${baseProduct.name} (Custom Design)`,
+            imageUrl: designUrl,
+            customDesignUrl: designUrl,
+            quantity: 1
+        };
+        return [...prevCart, newItem];
+    });
+    alert('Your custom design has been added to the cart!');
+  };
+
   const handleUpdateQuantity = (productId: number, newQuantity: number) => {
     if (newQuantity <= 0) {
-        // Remove item
         setCart(prevCart => prevCart.filter(item => item.id !== productId));
     } else {
-        // Update quantity
         setCart(prevCart => prevCart.map(item => item.id === productId ? {...item, quantity: newQuantity} : item));
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    setCart([]); // Clear the cart state
+    setCurrentView('confirmation'); // Show confirmation screen
   };
 
   const cartItemCount = useMemo(() => {
     return cart.reduce((total, item) => total + item.quantity, 0);
   }, [cart]);
   
-  const renderContent = () => {
+  const renderStoreContent = () => {
     if (selectedProduct) {
       return <ProductDetail product={selectedProduct} onBack={handleBack} onAddToCart={handleAddToCart} theme={theme} />;
     }
@@ -235,21 +291,45 @@ export default function App() {
       <div className="min-h-screen w-full bg-black/10 flex flex-col">
         <Header theme={theme} cartItemCount={cartItemCount} onCartClick={handleCartClick}/>
         <main className="pt-24 pb-12 lg:flex lg:flex-col lg:justify-center lg:min-h-screen flex-grow">
-          {renderContent()}
+          {renderStoreContent()}
         </main>
 
         <Footer theme={theme} />
         
         <div 
-          className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${isCartOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-          onClick={handleCloseCart}
+          className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${currentView === 'cart' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+          onClick={() => setCurrentView('store')}
         >
             <div onClick={(e) => e.stopPropagation()}>
-              <CartView cart={cart} onClose={handleCloseCart} onUpdateQuantity={handleUpdateQuantity} theme={theme} isOpen={isCartOpen}/>
+              <CartView 
+                cart={cart} 
+                onClose={() => setCurrentView('store')} 
+                onUpdateQuantity={handleUpdateQuantity} 
+                onCheckout={() => setCurrentView('checkout')}
+                theme={theme} 
+                isOpen={currentView === 'cart'}/>
             </div>
         </div>
         
-        <AIIdeaGenerator theme={theme} />
+        {currentView === 'checkout' && (
+            <CheckoutView 
+                cart={cart}
+                theme={theme}
+                onBackToCart={() => setCurrentView('cart')}
+                onPaymentSuccess={handlePaymentSuccess}
+            />
+        )}
+
+        {currentView === 'confirmation' && (
+            // FIX: Pass the 'theme' prop to OrderConfirmation as it is required.
+            <OrderConfirmation onBackToStore={() => setCurrentView('store')} theme={theme} />
+        )}
+        
+        <AIIdeaGenerator 
+            theme={theme} 
+            products={products}
+            onAddToCartWithDesign={handleAddToCartWithDesign}
+        />
       </div>
     </div>
   );

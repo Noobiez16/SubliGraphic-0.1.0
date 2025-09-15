@@ -11,4 +11,5 @@ export interface Product {
 
 export interface CartItem extends Product {
   quantity: number;
+  customDesignUrl?: string; // <-- ADDED THIS LINE
 }

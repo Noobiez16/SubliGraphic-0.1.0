@@ -1,7 +1,7 @@
 {
   "name": "subligraphic-project",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://Noobiez16.github.io/SubliGraphic-0.1.0",
   "type": "module",
   "scripts": {
@@ -13,13 +13,13 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@google/genai": "^0.18.0"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "@google/genai": "^1.19.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "gh-pages": "^6.1.1",
     "typescript": "^5.2.2",
