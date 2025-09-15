@@ -94,30 +94,37 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme }) => {
                     )}
                 </div>
             </button>
-            {isModalOpen && (
-                <div id="ai-modal-overlay" onClick={closeModal} className={`fixed inset-0 bg-black/50 flex items-center justify-center z-[1001] p-4 ${modalOverlayClasses}`} >
-                    <div id="ai-modal-content" onClick={(e) => e.stopPropagation()} className={`relative w-full max-w-lg p-6 ${modalContentClasses}`} >
-                        <button id="ai-modal-close" onClick={closeModal} className={`absolute top-2 right-4 text-3xl cursor-pointer ${subTextColor}`} >&times;</button>
-                        <h2 className={`text-2xl font-bold mt-0 ${textColor}`}>No Ideas?...</h2>
-                        <p className={`mb-4 ${subTextColor}`}>Describe what you're looking for...</p>
-                        <textarea id="ai-prompt-input" value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Ex: 'A fun design for my dad's birthday, he's a programmer'" className={`w-full min-h-[100px] rounded-lg border p-3 text-base resize-vertical mb-4 text-[#212529] ${textAreaThemeClasses}`} ></textarea>
-                        <button id="ai-generate-btn" onClick={handleGenerate} disabled={isLoading} className={`w-full py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-primary] text-[--color-on-primary] disabled:bg-gray-400 disabled:cursor-not-allowed`} >
-                            {isLoading ? 'Thinking...' : 'Generate Ideas'}
+            
+            <div 
+              id="ai-modal-overlay" 
+              onClick={closeModal} 
+              className={`fixed z-[1001] inset-0 bg-black/50 flex items-center justify-center p-4 md:p-0 md:bg-transparent md:inset-auto md:bottom-24 md:right-5 transition-all duration-300 ease-in-out ${modalOverlayClasses} md:backdrop-blur-none ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+            >
+                <div 
+                  id="ai-modal-content" 
+                  onClick={(e) => e.stopPropagation()} 
+                  className={`relative w-full max-w-lg p-6 ${modalContentClasses} transform transition-all duration-300 ease-in-out md:origin-bottom-right ${isModalOpen ? 'scale-100' : 'scale-95'}`}
+                >
+                    <button id="ai-modal-close" onClick={closeModal} className={`absolute top-2 right-4 text-3xl cursor-pointer ${subTextColor}`} >&times;</button>
+                    <h2 className={`text-2xl font-bold mt-0 ${textColor}`}>No Ideas?...</h2>
+                    <p className={`mb-4 ${subTextColor}`}>Describe what you're looking for...</p>
+                    <textarea id="ai-prompt-input" value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Ex: 'A fun design for my dad's birthday, he's a programmer'" className={`w-full min-h-[100px] rounded-lg border p-3 text-base resize-vertical mb-4 text-[#212529] ${textAreaThemeClasses}`} ></textarea>
+                    <button id="ai-generate-btn" onClick={handleGenerate} disabled={isLoading} className={`w-full py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-primary] text-[--color-on-primary] disabled:bg-gray-400 disabled:cursor-not-allowed`} >
+                        {isLoading ? 'Thinking...' : 'Generate Ideas'}
+                    </button>
+                    {(error || response) && (
+                        <div id="ai-response-area" className={`mt-4 p-4 rounded-lg min-h-[50px] whitespace-pre-wrap ${isIOS ? 'bg-black/5' : 'bg-gray-100'}`}>
+                            {error && <p className="text-red-500">{error}</p>}
+                            {response && <p className={`${textColor}`}>{response}</p>}
+                        </div>
+                    )}
+                    {response && !error && (
+                        <button id="ai-copy-btn" onClick={handleCopy} className="w-full mt-3 py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-secondary] text-[--color-on-primary]" >
+                            {copyButtonText}
                         </button>
-                        {(error || response) && (
-                            <div id="ai-response-area" className={`mt-4 p-4 rounded-lg min-h-[50px] whitespace-pre-wrap ${isIOS ? 'bg-black/5' : 'bg-gray-100'}`}>
-                                {error && <p className="text-red-500">{error}</p>}
-                                {response && <p className={`${textColor}`}>{response}</p>}
-                            </div>
-                        )}
-                        {response && !error && (
-                            <button id="ai-copy-btn" onClick={handleCopy} className="w-full mt-3 py-3 px-4 border-none rounded-lg text-base font-semibold cursor-pointer bg-[--color-secondary] text-[--color-on-primary]" >
-                                {copyButtonText}
-                            </button>
-                        )}
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
         </>
     );
 };
