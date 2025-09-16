@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.3.0] - 2025-09-13
+
+### Added
+- **Real PayPal Payments:** Integrated the official PayPal React SDK (`@paypal/react-paypal-js`) to replace the simulated payment flow with a fully functional transaction system.
+- **ATH Móvil Payment Flow:** Implemented a user-friendly modal for ATH Móvil payments, displaying business information and a "Copy Number" button for convenience.
+
+### Changed
+- **Upgraded Checkout View:** Overhauled `components/CheckoutView.tsx` to include the live PayPal payment button and the trigger for the ATH Móvil modal.
+- **Vite Configuration:** Modified `vite.config.ts` to securely load the PayPal Client ID from environment variables, including a workaround for environments that do not support `.env` files.
+
+### Fixed
+- **PayPal Configuration Error:** Resolved the application-blocking error by correctly providing the `VITE_PAYPAL_CLIENT_ID` to the application context.
+- **Module Export Error:** Corrected a `SyntaxError` by properly exporting the `CheckoutView` and `OrderConfirmation` components from their module.
+- **JSX Parsing Error:** Fixed a syntax issue in the ATH Móvil button that prevented the component from rendering.
+
+---
+
 ## [0.2.0] - 2025-09-12
 
 ### Added
