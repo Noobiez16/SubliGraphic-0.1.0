@@ -6,39 +6,40 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ theme }) => {
+    const isIOS = theme === 'ios';
 
     return (
         <footer className="w-full py-10 px-[5%] mt-16 bg-[--color-surface] text-[--color-on-surface-variant] border-t border-[--color-outline]">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-screen-xl mx-auto pb-8">
                 {/* Column 1: Brand */}
                 <div className="footer-column">
-                    <h4 className="font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4">SubliGraphic</h4>
-                    <p className="text-sm">Creativity without limits, sublimation without equal.</p>
+                    <h4 className={`font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4 ${isIOS ? 'text-ios-safe' : ''}`}>SubliGraphic</h4>
+                    <p className={`text-sm ${isIOS ? 'text-ios-safe' : ''}`}>Creativity without limits, sublimation without equal.</p>
                 </div>
                 
                 {/* Column 2: Store Links */}
                 <div className="footer-column">
-                    <h4 className="font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4">Store</h4>
+                    <h4 className={`font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4 ${isIOS ? 'text-ios-safe' : ''}`}>Store</h4>
                     <ul className="space-y-2.5 text-sm">
-                        <li><a href="#" className="no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">Mugs</a></li>
-                        <li><a href="#" className="no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">Tumblers</a></li>
-                        <li><a href="#" className="no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">News</a></li>
+                        <li><a href="#" className={`no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors ${isIOS ? 'text-ios-safe' : ''}`}>Mugs</a></li>
+                        <li><a href="#" className={`no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors ${isIOS ? 'text-ios-safe' : ''}`}>Tumblers</a></li>
+                        <li><a href="#" className={`no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors ${isIOS ? 'text-ios-safe' : ''}`}>News</a></li>
                     </ul>
                 </div>
 
                 {/* Column 3: Support Links */}
                 <div className="footer-column">
-                    <h4 className="font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4">Support</h4>
+                    <h4 className={`font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4 ${isIOS ? 'text-ios-safe' : ''}`}>Support</h4>
                     <ul className="space-y-2.5 text-sm">
-                        <li><a href="#" className="no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">Frequently Asked Questions</a></li>
-                        <li><a href="#" className="no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">Contact</a></li>
-                        <li><a href="#" className="no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">Return Policy</a></li>
+                        <li><a href="#" className={`no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors ${isIOS ? 'text-ios-safe' : ''}`}>Frequently Asked Questions</a></li>
+                        <li><a href="#" className={`no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors ${isIOS ? 'text-ios-safe' : ''}`}>Contact</a></li>
+                        <li><a href="#" className={`no-underline text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors ${isIOS ? 'text-ios-safe' : ''}`}>Return Policy</a></li>
                     </ul>
                 </div>
 
                 {/* Column 4: Social Media */}
                 <div className="footer-column">
-                    <h4 className="font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4">Follow us</h4>
+                    <h4 className={`font-['Playfair_Display'] text-xl text-[--color-on-surface] mb-4 ${isIOS ? 'text-ios-safe' : ''}`}>Follow us</h4>
                     <div className="flex space-x-4">
                         <a href="#" aria-label="Facebook" className="text-[--color-on-surface-variant] hover:text-[--color-primary] transition-colors">
                            <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z"/></svg>
@@ -50,7 +51,7 @@ const Footer: React.FC<FooterProps> = ({ theme }) => {
                 </div>
             </div>
             <div className="border-t border-[--color-outline] text-center pt-8 mt-8 text-sm">
-                <p>&copy; 2024 SubliGraphic. All rights reserved.</p>
+                <p className={`${isIOS ? 'text-ios-safe' : ''}`}>&copy; 2024 SubliGraphic. All rights reserved.</p>
             </div>
         </footer>
     );

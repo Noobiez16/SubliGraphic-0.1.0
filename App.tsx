@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useThemeDetector } from './hooks/useThemeDetector';
+import './App.css';
 // FIX: Import the global Theme type to ensure consistency across components.
 import type { Product, CartItem, Theme } from './types';
 import { products } from './constants';
@@ -306,7 +306,7 @@ export default function App() {
 
   return (
     <PayPalScriptProvider options={{ clientId: paypalClientId, currency: "USD" }}>
-        <div className="min-h-screen w-full bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('https://picsum.photos/1920/1080')" }}>
+        <div className={`min-h-screen w-full bg-cover bg-center bg-fixed ${theme === 'ios' ? 'theme-ios' : 'theme-android'} app-background`}>
         <div className="min-h-screen w-full bg-black/10 flex flex-col">
             <Header theme={theme} cartItemCount={cartItemCount} onCartClick={handleCartClick}/>
             <main className="pt-24 pb-12 lg:flex lg:flex-col lg:justify-center lg:min-h-screen flex-grow">

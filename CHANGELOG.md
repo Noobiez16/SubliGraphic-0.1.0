@@ -5,6 +5,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.3.1] - 2025-09-16
+
+### Added
+- Implemented a dynamic, OS-native theming system: "Material Expressive 3" for Android and "Liquid Glass" for iOS.
+- Integrated the official PayPal React SDK for functional payment processing, replacing the previous simulation.
+- Added a user-friendly modal for ATH Móvil payments.
+
+### Changed
+- Refactored the entire styling system from component-level conditional logic to a global, CSS variable-driven architecture for better maintainability.
+- Enhanced TypeScript configuration by enabling strict mode for improved type safety.
+
+### Fixed
+- Resolved major text and button readability issues on the iOS "Liquid Glass" theme by adding text shadows and adjusting colors.
+- Corrected multiple build and deployment errors related to environment variables (.env, Vite config) for local, cloud, and production builds on GitHub Pages.
+- Addressed an accessibility issue by adding an aria-label to the icon-only cart button.
+- Fixed TypeScript module resolution errors for .png files by adding a type declaration file.
+- Resolved all outstanding CSS and linter warnings, including CSS prefix order and removing inline styles.
+
+---
+
 ## [0.3.0] - 2025-09-13
 
 ### Added

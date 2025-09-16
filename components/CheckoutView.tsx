@@ -1,6 +1,6 @@
-
 import React, { useMemo, useState } from 'react';
 import { PayPalButtons } from "@paypal/react-paypal-js";
+import athMovilLogo from '/assets/ath-movil-logo.png';
 import type { Theme, CartItem } from '../types';
 import Button from './Button';
 
@@ -12,7 +12,7 @@ const ATHMovilModal: React.FC<{
     theme: Theme;
 }> = ({ isOpen, onClose, onPaymentConfirmed, theme }) => {
     const [copySuccess, setCopySuccess] = useState('');
-    const phoneNumber = '(787) 123-4567';
+    const phoneNumber = '(787) 553-4067';
 
     const handleCopy = () => {
         navigator.clipboard.writeText(phoneNumber.replace(/\D/g, ''))
@@ -31,14 +31,14 @@ const ATHMovilModal: React.FC<{
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[1003] p-4" onClick={onClose}>
             <div className="bg-[--color-surface] p-6 sm:p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center" onClick={(e) => e.stopPropagation()}>
-                <h2 className="text-2xl font-bold text-[--color-on-surface] mb-2">Pay with ATH Móvil</h2>
+                <h2 className="text-2xl font-bold text-[--color-on-surface] mb-2">ATH Móvil</h2>
                 <p className="text-[--color-on-surface-variant] mb-4">
-                    Send the payment to the following business:
+                    Send the payment to the following person:
                 </p>
                 <div className="bg-gray-100 p-4 rounded-lg mb-6 text-left">
                     <p className="text-sm text-gray-500 font-medium">Business Name</p>
                     <p className="text-lg font-semibold text-gray-800">SubliGraphic</p>
-                    <p className="text-sm text-gray-500 mt-3 font-medium">Phone Number / pATH</p>
+                    <p className="text-sm text-gray-500 mt-3 font-medium">Phone Number </p>
                     <p className="text-lg font-semibold text-gray-800">{phoneNumber}</p>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -153,8 +153,10 @@ const CheckoutView: React.FC<CheckoutViewProps> = ({ cart, theme, onBackToCart, 
                          <PayPalButtons
                             key={cart.length} // Force re-render when cart changes
                             style={{ layout: "vertical", label: "pay" }}
+                            fundingSource="paypal"
                             createOrder={async (data, actions) => {
                                 return actions.order.create({
+                                    intent: 'CAPTURE', // <-- Cambio Aqui
                                     purchase_units: [{
                                         amount: {
                                             value: total.toFixed(2),
@@ -187,7 +189,7 @@ const CheckoutView: React.FC<CheckoutViewProps> = ({ cart, theme, onBackToCart, 
 
                         {/* ATH Móvil Button */}
                         <button onClick={() => setIsAthMovilModalOpen(true)} className={`${paymentButtonBase} ${isIOS ? paymentButtonIOS : paymentButtonAndroid}`}>
-                           <span className="font-semibold text-[--color-on-surface]">Pay with ATH Móvil</span>
+                           <img src={athMovilLogo} alt="Pay with ATH Móvil" className="h-8" />
                         </button>
                     </div>
                 </div>
