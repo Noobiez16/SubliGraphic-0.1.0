@@ -94,28 +94,33 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                         mask-position: -4640px 0;
                     }
                 }
-            `}</style>
+             `}</style>
         
-            {/* 
-              * FIX: Resolved TS1117 by removing the invalid inline style and wrapper div.
-              * The button now uses the 'ai-fab-sticky' class from the external
-              * stylesheet to correctly handle sticky positioning with fallbacks.
+            {/* * FIX: The button is now wrapped in a container div.
+              * This container uses Tailwind CSS classes for universal sticky positioning.
+              * 'sticky' works on all modern browsers, including iOS Safari.
+              * 'bottom-5 right-5' places it correctly in the bottom-right corner.
+              * 'z-[1999]' ensures it floats above other content.
+              * 'pointer-events-none' on the container and 'pointer-events-auto' on the button
+              * prevent the container from blocking interactions with elements underneath it.
             */}
-            <button 
-                id="ai-fab" 
-                onClick={() => setIsModalOpen(!isModalOpen)} 
-                className={`ai-fab-sticky h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[1999] transition-transform hover:scale-105 ${fabClasses}`} 
-                aria-label="Generate design with AI"
-            >
-                <div className={fabIconColor}>
-                    {isIOS ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9l1.25-2.5L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"/></svg>
-                    )}
-                </div>
-            </button>
-            
+            <div className="sticky bottom-5 right-5 z-[1999] self-end pointer-events-none">
+                <button 
+                    id="ai-fab" 
+                    onClick={() => setIsModalOpen(!isModalOpen)} 
+                    className={`h-14 w-14 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-105 pointer-events-auto ${fabClasses}`} 
+                    aria-label="Generate design with AI"
+                >
+                    <div className={fabIconColor}>
+                        {isIOS ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9l1.25-2.5L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"/></svg>
+                        )}
+                    </div>
+                </button>
+            </div>
+          
             <div 
               id="ai-modal-overlay" 
               onClick={closeModal} 
