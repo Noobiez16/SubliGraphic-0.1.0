@@ -90,7 +90,7 @@ const CartView: React.FC<CartViewProps> = ({ cart, onClose, onUpdateQuantity, on
 
     return (
         <div className={`w-[90vw] max-w-[450px] md:w-full md:max-w-[600px] max-h-[85vh] p-6 relative flex flex-col transform transition-transform duration-300 ease-in-out ${isOpen ? 'scale-100' : 'scale-95'} ${containerClasses}`}>
-            <button onClick={onClose} className={`absolute top-3 right-4 text-4xl font-light leading-none p-1 cursor-pointer ${subTextColor}`}>&times;</button>
+            <button onClick={onClose} aria-label="Close cart" className={`absolute top-3 right-4 text-4xl font-light leading-none p-1 cursor-pointer ${subTextColor}`}>&times;</button>
             <h2 className={`font-['Playfair_Display'] text-3xl mb-4 ${textColor}`}>Your Cart</h2>
             
             <div className={`flex-grow overflow-y-auto py-2 border-t border-b ${borderColor} mb-4`}>
@@ -271,8 +271,7 @@ export default function App() {
     return (
       <div className="container mx-auto px-4">
         <h2 
-          className="font-['Playfair_Display'] text-5xl font-bold text-center text-white mb-8"
-          style={{textShadow: '0 3px 6px rgba(0, 0, 0, 0.5)'}}
+          className="font-['Playfair_Display'] text-5xl font-bold text-center text-white mb-8 text-shadow"
         >
           Our Collection
         </h2>

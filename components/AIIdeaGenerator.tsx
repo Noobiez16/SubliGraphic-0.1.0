@@ -1,9 +1,10 @@
-
 import React, { useState } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import Button from './Button';
 // FIX: Import the global Theme type to ensure consistency.
 import type { Product, Theme } from '../types';
+// FIX: Import the stylesheet to use the new CSS class.
+import './AIIdeaGenerator.css';
 
 // FIX: Removed the local Theme type definition ('ios' | 'android') to use the imported global Theme type.
 
@@ -95,7 +96,17 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                 }
             `}</style>
         
-            <button id="ai-fab" onClick={() => setIsModalOpen(!isModalOpen)} className={`fixed bottom-5 right-5 h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[1999] transition-transform hover:scale-105 ${fabClasses}`} aria-label="Generate design with AI" >
+            {/* 
+              * FIX: Resolved TS1117 by removing the invalid inline style and wrapper div.
+              * The button now uses the 'ai-fab-sticky' class from the external
+              * stylesheet to correctly handle sticky positioning with fallbacks.
+            */}
+            <button 
+                id="ai-fab" 
+                onClick={() => setIsModalOpen(!isModalOpen)} 
+                className={`ai-fab-sticky h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[1999] transition-transform hover:scale-105 ${fabClasses}`} 
+                aria-label="Generate design with AI"
+            >
                 <div className={fabIconColor}>
                     {isIOS ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
@@ -138,8 +149,8 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                                         <div className="w-full flex flex-col items-center">
                                             <h4 className="font-semibold text-center mb-2">360 Preview</h4>
                                             <div className="relative w-64 h-64">
-                                                <div className="absolute inset-0 w-full h-full bg-no-repeat" style={{ backgroundImage: `url('https://i.imgur.com/2q2G51g.png')`, backgroundSize: 'auto 100%', animation: `spin360 4s steps(29) infinite`}}></div>
-                                                <div className="absolute inset-0 w-full h-full" style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', maskImage: `url('https://i.imgur.com/2q2G51g.png')`, maskSize: 'auto 100%', maskMode: 'alpha', animation: `spin360 4s steps(29) infinite`}}></div>
+                                                <div className="absolute inset-0 w-full h-full bg-no-repeat mug-preview-sprite"></div>
+                                                <div className="absolute inset-0 w-full h-full mug-preview-design" style={{ backgroundImage: `url(${imageUrl})` }}></div>
                                             </div>
                                             <div className="flex justify-center mt-4">
                                                 <button onClick={() => setShowMugPreview(false)} className={`py-2 px-5 rounded-full font-semibold text-sm ${isIOS ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-gray-200 text-black hover:bg-gray-300'}`}>

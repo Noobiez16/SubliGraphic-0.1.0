@@ -1,3 +1,7 @@
 .app-background {
     background-image: url('https://picsum.photos/1920/1080');
 }
+
+.text-shadow {
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+}
