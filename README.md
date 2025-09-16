@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/Current_Version-0.2.0-blue" alt="Versión">
+<img src="https://img.shields.io/badge/Current_Version-0.3.1-blue" alt="Versión">
 <img src="https://img.shields.io/badge/Estado-En Desarrollo-yellowgreen" alt="Estado del Proyecto">
 <img src="https://img.shields.io/badge/License-MIT%20license-green" alt="Licencia MIT">
 </p>
@@ -61,3 +61,4 @@ Despliegue: GitHub Pages
 
 📜 Historial de Cambios
 Todos los cambios importantes y las nuevas versiones se documentan en el archivo CHANGELOG.md.
+
