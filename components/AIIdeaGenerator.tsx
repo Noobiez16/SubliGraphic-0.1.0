@@ -73,7 +73,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
     const fabClasses = isIOS ? 'bg-white/70 backdrop-blur-[15px] border border-black/5' : 'bg-[--color-primary] shadow-lg';
     const fabIconColor = isIOS ? 'text-[--color-primary]' : 'text-[--color-on-primary]';
     const modalOverlayClasses = isIOS ? 'backdrop-blur-sm' : '';
-    const modalContentClasses = isIOS ? 'bg-white/75 backdrop-blur-[25px] border border-white/20 rounded-2xl shadow-xl' : 'bg-[--color-surface] rounded-3xl shadow-2xl';
+    const modalContentClasses = isIOS ? 'bg-gray-100/75 backdrop-blur-[25px] border border-white/20 rounded-2xl shadow-xl' : 'bg-[--color-surface] rounded-3xl shadow-2xl';
     const textColor = isIOS ? 'text-black' : 'text-[--color-on-surface]';
     const subTextColor = isIOS ? 'text-gray-600' : 'text-[--color-on-surface-variant]';
     const textAreaThemeClasses = isIOS 
@@ -95,7 +95,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                 }
             `}</style>
         
-            <button id="ai-fab" onClick={() => setIsModalOpen(!isModalOpen)} className={`fixed bottom-5 right-5 h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[999] transition-transform hover:scale-105 ${fabClasses}`} aria-label="Generate design with AI" >
+            <button id="ai-fab" onClick={() => setIsModalOpen(!isModalOpen)} className={`fixed bottom-5 right-5 h-14 w-14 rounded-full flex items-center justify-center cursor-pointer z-[1999] transition-transform hover:scale-105 ${fabClasses}`} aria-label="Generate design with AI" >
                 <div className={fabIconColor}>
                     {isIOS ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
@@ -108,7 +108,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
             <div 
               id="ai-modal-overlay" 
               onClick={closeModal} 
-              className={`fixed z-[1001] inset-0 bg-black/50 flex items-center justify-center p-4 md:p-0 md:bg-transparent md:inset-auto md:bottom-24 md:right-5 transition-all duration-300 ease-in-out ${modalOverlayClasses} md:backdrop-blur-none ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+              className={`fixed z-[2000] inset-0 bg-black/50 flex items-center justify-center p-4 md:p-0 md:bg-transparent md:inset-auto md:bottom-24 md:right-5 transition-all duration-300 ease-in-out ${modalOverlayClasses} md:backdrop-blur-none ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
             >
                 <div 
                   id="ai-modal-content" 
