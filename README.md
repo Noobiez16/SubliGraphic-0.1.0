@@ -1,7 +1,6 @@
 <div align="center">
 <!-- Puedes crear un banner simple en Canva o una herramienta similar y subirlo a Imgur -->
-  
-<img width="2542" height="1274" alt="image" src="https://github.com/user-attachments/assets/33c1ba3d-6684-4b51-9785-50c13514368e" />
+  <img width="2542" height="1274" alt="image" src="https://github.com/user-attachments/assets/33c1ba3d-6684-4b51-9785-50c13514368e" />
 <img width="444" height="960" alt="image" src="https://github.com/user-attachments/assets/e4c6f521-103f-4631-bcfc-85c2ea5c222b" />
 <img width="444" height="960" alt="image" src="https://github.com/user-attachments/assets/e9f4fb1f-35b6-41be-b7fc-b9d5ca9ad4ad" />
 
@@ -65,5 +64,6 @@ Despliegue: GitHub Pages
 
 📜 Historial de Cambios
 Todos los cambios importantes y las nuevas versiones se documentan en el archivo CHANGELOG.md.
+
 
 
