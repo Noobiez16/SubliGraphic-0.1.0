@@ -15,8 +15,7 @@
 <img src="https://img.shields.io/badge/Estado-En Desarrollo-yellowgreen" alt="Estado del Proyecto">
 <img src="https://img.shields.io/badge/License-MIT%20license-green" alt="Licencia MIT">
 </p>
-
-(Nota: Reemplaza esta URL con una captura de pantalla actualizada de tu proyecto para mostrar su mejor cara)
+
 
 🚀 ¿Qué es SubliGraphic?
 SubliGraphic es un concepto de tienda en línea moderna que ofrece una experiencia de usuario (UX) única y a medida. Su característica principal es la capacidad de detectar si un usuario la visita desde un dispositivo Android o iOS, renderizando una interfaz que se siente completamente nativa para cada plataforma:
