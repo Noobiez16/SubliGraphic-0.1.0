@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import Button from './Button';
-import type { Product } from '../types';
+// FIX: Import the global Theme type to ensure consistency.
+import type { Product, Theme } from '../types';
 
-type Theme = 'ios' | 'android';
+// FIX: Removed the local Theme type definition ('ios' | 'android') to use the imported global Theme type.
 
 interface AIIdeaGeneratorProps {
     theme: Theme;

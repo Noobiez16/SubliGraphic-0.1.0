@@ -1,4 +1,4 @@
-export type Theme = 'ios' | 'android';
+export type Theme = 'ios' | 'android' | 'desktop';
 
 export interface Product {
   id: number;

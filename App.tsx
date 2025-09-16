@@ -1,8 +1,9 @@
 
-
 import React, { useState, useEffect, useMemo } from 'react';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useThemeDetector } from './hooks/useThemeDetector';
-import type { Product, CartItem } from './types';
+// FIX: Import the global Theme type to ensure consistency across components.
+import type { Product, CartItem, Theme } from './types';
 import { products } from './constants';
 import Header from './components/Header';
 import ProductCard from './components/ProductCard';
@@ -11,12 +12,15 @@ import AIIdeaGenerator from './components/AIIdeaGenerator';
 import Footer from './components/Footer';
 import CheckoutView, { OrderConfirmation } from './components/CheckoutView';
 
+const paypalClientId = process.env.PAYPAL_CLIENT_ID;
+
 // ProductDetail component
 interface ProductDetailProps {
   product: Product;
   onBack: () => void;
   onAddToCart: (product: Product) => void;
-  theme: 'ios' | 'android';
+  // FIX: Changed type from `'ios' | 'android'` to the global `Theme` type to correctly handle all possible theme values.
+  theme: Theme;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ product, onBack, onAddToCart, theme }) => {
@@ -64,7 +68,8 @@ interface CartViewProps {
     onClose: () => void;
     onUpdateQuantity: (productId: number, newQuantity: number) => void;
     onCheckout: () => void;
-    theme: 'ios' | 'android';
+    // FIX: Changed type from `'ios' | 'android'` to the global `Theme` type to correctly handle all possible theme values.
+    theme: Theme;
     isOpen: boolean;
 }
 
@@ -285,52 +290,67 @@ export default function App() {
       </div>
     );
   };
-
-  return (
-    <div className="min-h-screen w-full bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('https://picsum.photos/1920/1080')" }}>
-      <div className="min-h-screen w-full bg-black/10 flex flex-col">
-        <Header theme={theme} cartItemCount={cartItemCount} onCartClick={handleCartClick}/>
-        <main className="pt-24 pb-12 lg:flex lg:flex-col lg:justify-center lg:min-h-screen flex-grow">
-          {renderStoreContent()}
-        </main>
-
-        <Footer theme={theme} />
-        
-        <div 
-          className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${currentView === 'cart' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-          onClick={() => setCurrentView('store')}
-        >
-            <div onClick={(e) => e.stopPropagation()}>
-              <CartView 
-                cart={cart} 
-                onClose={() => setCurrentView('store')} 
-                onUpdateQuantity={handleUpdateQuantity} 
-                onCheckout={() => setCurrentView('checkout')}
-                theme={theme} 
-                isOpen={currentView === 'cart'}/>
+  
+  if (!paypalClientId) {
+    return (
+        <div className="min-h-screen w-full bg-red-100 flex items-center justify-center p-4">
+            <div className="p-8 bg-white rounded-lg shadow-md text-center">
+                <h1 className="text-2xl font-bold text-red-700">Configuration Error</h1>
+                <p className="mt-2 text-gray-600">
+                    The PayPal Client ID is not configured. Please set the <code className="bg-red-200 text-red-800 px-1 rounded">VITE_PAYPAL_CLIENT_ID</code> variable in your <code>.env</code> file.
+                </p>
             </div>
         </div>
-        
-        {currentView === 'checkout' && (
-            <CheckoutView 
-                cart={cart}
-                theme={theme}
-                onBackToCart={() => setCurrentView('cart')}
-                onPaymentSuccess={handlePaymentSuccess}
-            />
-        )}
+    );
+  }
 
-        {currentView === 'confirmation' && (
-            // FIX: Pass the 'theme' prop to OrderConfirmation as it is required.
-            <OrderConfirmation onBackToStore={() => setCurrentView('store')} theme={theme} />
-        )}
-        
-        <AIIdeaGenerator 
-            theme={theme} 
-            products={products}
-            onAddToCartWithDesign={handleAddToCartWithDesign}
-        />
-      </div>
-    </div>
+  return (
+    <PayPalScriptProvider options={{ clientId: paypalClientId, currency: "USD" }}>
+        <div className="min-h-screen w-full bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('https://picsum.photos/1920/1080')" }}>
+        <div className="min-h-screen w-full bg-black/10 flex flex-col">
+            <Header theme={theme} cartItemCount={cartItemCount} onCartClick={handleCartClick}/>
+            <main className="pt-24 pb-12 lg:flex lg:flex-col lg:justify-center lg:min-h-screen flex-grow">
+            {renderStoreContent()}
+            </main>
+
+            <Footer theme={theme} />
+            
+            <div 
+            className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${currentView === 'cart' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+            onClick={() => setCurrentView('store')}
+            >
+                <div onClick={(e) => e.stopPropagation()}>
+                <CartView 
+                    cart={cart} 
+                    onClose={() => setCurrentView('store')} 
+                    onUpdateQuantity={handleUpdateQuantity} 
+                    onCheckout={() => setCurrentView('checkout')}
+                    theme={theme} 
+                    isOpen={currentView === 'cart'}/>
+                </div>
+            </div>
+            
+            {currentView === 'checkout' && (
+                <CheckoutView 
+                    cart={cart}
+                    theme={theme}
+                    onBackToCart={() => setCurrentView('cart')}
+                    onPaymentSuccess={handlePaymentSuccess}
+                />
+            )}
+
+            {currentView === 'confirmation' && (
+                // FIX: Pass the 'theme' prop to OrderConfirmation as it is required.
+                <OrderConfirmation onBackToStore={() => setCurrentView('store')} theme={theme} />
+            )}
+            
+            <AIIdeaGenerator 
+                theme={theme} 
+                products={products}
+                onAddToCartWithDesign={handleAddToCartWithDesign}
+            />
+        </div>
+        </div>
+    </PayPalScriptProvider>
   );
 }

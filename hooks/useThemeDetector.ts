@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { Theme } from '../types';
 
 export const useThemeDetector = (): Theme => {
-  const [theme, setTheme] = useState<Theme>('android');
+  const [theme, setTheme] = useState<Theme>('desktop');
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -19,7 +19,7 @@ export const useThemeDetector = (): Theme => {
       setTheme('android');
     } else {
       // Default for non-mobile devices (desktops)
-      setTheme('android');
+      setTheme('desktop');
     }
   }, []);
 

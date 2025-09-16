@@ -17,13 +17,14 @@ export default defineConfig(({ mode }) => {
         // 3. MANTENEMOS TU NUEVA CONFIGURACIÓN PARA LAS VARIABLES DE ENTORNO
         define: {
             'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-            'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+            'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+            'process.env.PAYPAL_CLIENT_ID': JSON.stringify(env.VITE_PAYPAL_CLIENT_ID),
         },
         
         // 4. MANTENEMOS TU NUEVA CONFIGURACIÓN PARA LOS ALIAS
         resolve: {
             alias: {
-                '@': path.resolve(__dirname, '.'),
+                '@': path.resolve(__dirname, './src'),
             }
         }
     };
