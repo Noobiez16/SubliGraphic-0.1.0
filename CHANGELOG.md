@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.3.2] - 2025-09-16
+
+### Added
+- **Local Development Environment:** Created a `.env` file to properly manage the PayPal Client ID, preventing configuration errors during local development.
+
+### Changed
+- **Code Simplification:** Removed the custom `.ai-fab-sticky` CSS class in favor of a more robust and maintainable Tailwind CSS implementation for component positioning.
+- **Styling Architecture:** Refactored multiple components to eliminate inline styles, moving them to dedicated CSS classes to improve code quality and adherence to best practices.
+
+### Fixed
+- **AI Button Positioning:** Corrected a major layout bug causing the AI Floating Action Button (FAB) to be misaligned on iOS. The positioning logic was refactored to ensure consistent bottom-right placement across all devices.
+- **Build Stability:** Resolved a critical TypeScript build error (TS1117) related to duplicate object properties in `AIIdeaGenerator.tsx`.
+- **Accessibility:** Addressed an accessibility issue by adding a descriptive `aria-label` to the icon-only cart button, making it accessible to screen readers.
+- **CSS Compatibility:** Ensured proper vendor prefixes for the `mask-mode` CSS property, resolving a minor browser compatibility warning.
+
+---
+
 ## [0.3.1] - 2025-09-16
 
 ### Added
