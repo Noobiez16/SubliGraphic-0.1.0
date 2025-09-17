@@ -124,12 +124,12 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
             <div 
               id="ai-modal-overlay" 
               onClick={closeModal} 
-              className={`fixed z-[2000] inset-0 bg-black/50 flex items-center justify-center p-4 md:p-0 md:bg-transparent md:inset-auto md:bottom-24 md:right-5 transition-all duration-300 ease-in-out ${modalOverlayClasses} md:backdrop-blur-none ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+              className={`fixed z-[2000] inset-0 bg-black/50 p-4 md:p-0 md:bg-transparent md:inset-auto md:bottom-24 md:right-5 transition-all duration-300 ease-in-out ${modalOverlayClasses} md:backdrop-blur-none ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
             >
                 <div 
                   id="ai-modal-content" 
                   onClick={(e) => e.stopPropagation()} 
-                  className={`relative w-full max-w-lg p-6 ${modalContentClasses} transform transition-all duration-300 ease-in-out md:origin-bottom-right ${isModalOpen ? 'scale-100' : 'scale-95'}`}
+                  className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:absolute md:top-auto md:left-auto md:translate-x-0 md:translate-y-0 w-full max-w-lg p-6 ${modalContentClasses} transform transition-all duration-300 ease-in-out md:origin-bottom-right ${isModalOpen ? 'scale-100' : 'scale-95'}`}
                 >
                     <div className="relative w-full min-h-[400px] flex flex-col">
                         <div className={`relative transition-opacity duration-300 ${isLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
