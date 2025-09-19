@@ -83,15 +83,41 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
     
     const closeModal = () => setIsModalOpen(false);
 
-    const fabClasses = isIOS ? 'bg-white/70 backdrop-blur-[15px] border border-black/5' : 'bg-[--color-primary] shadow-lg';
-    const fabIconColor = isIOS ? 'text-[--color-primary]' : 'text-[--color-on-primary]';
-    const modalOverlayClasses = isIOS ? 'backdrop-blur-sm' : '';
-    const modalContentClasses = isIOS ? 'bg-gray-100/75 backdrop-blur-[25px] border border-white/20 rounded-2xl shadow-xl' : 'bg-[--color-surface] rounded-3xl shadow-2xl';
-    const textColor = isIOS ? 'text-black' : 'text-[--color-on-surface]';
-    const subTextColor = isIOS ? 'text-gray-600' : 'text-[--color-on-surface-variant]';
-    const textAreaThemeClasses = isIOS 
-        ? 'border-black/10 placeholder-gray-500 bg-white/80' 
-        : 'border-gray-300 placeholder-gray-400 bg-white';
+    const getThemeStyles = (theme: Theme) => {
+        switch (theme) {
+            case 'ios':
+                return {
+                    fab: 'bg-white/70 backdrop-blur-[15px] border border-black/5',
+                    fabIcon: 'text-[--color-primary]',
+                    modalOverlay: 'backdrop-blur-sm',
+                    modalContent: 'bg-gray-100/75 backdrop-blur-[25px] border border-white/20 rounded-2xl shadow-xl',
+                    text: 'text-black',
+                    subText: 'text-gray-600',
+                    textArea: 'border-black/10 placeholder-gray-500 bg-white/80',
+                };
+            case 'android':
+            default:
+                return {
+                    fab: 'bg-[--color-primary] shadow-lg',
+                    fabIcon: 'text-[--color-on-primary]',
+                    modalOverlay: '',
+                    modalContent: 'bg-[--color-surface] rounded-3xl shadow-2xl',
+                    text: 'text-[--color-on-surface]',
+                    subText: 'text-[--color-on-surface-variant]',
+                    textArea: 'border-gray-300 placeholder-gray-400 bg-white',
+                };
+        }
+    };
+
+    const {
+        fab: fabClasses,
+        fabIcon: fabIconColor,
+        modalOverlay: modalOverlayClasses,
+        modalContent: modalContentClasses,
+        text: textColor,
+        subText: subTextColor,
+        textArea: textAreaThemeClasses,
+    } = getThemeStyles(theme);
 
     return (
         <>
@@ -103,7 +129,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                 aria-label="Generate design with AI"
             >
                 <div className={fabIconColor}>
-                    {isIOS ? (
+                    {theme === 'ios' ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3L9.5 5.5 12 8l2.5-2.5L12 3zm0 18l2.5-2.5L12 16l-2.5 2.5L12 21zm-9-9l2.5 2.5L8 12 5.5 9.5 3 12zm18 0l-2.5-2.5L16 12l2.5 2.5L21 12z"/></svg>
                     ) : (
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9l1.25-2.5L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"/></svg>
@@ -136,7 +162,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                                 Generate Design
                             </button>
                             
-                            <div id="ai-response-area" className={`mt-4 flex flex-col items-center justify-center min-h-[250px] p-4 rounded-lg ${isIOS ? 'bg-black/5' : 'bg-gray-100'}`}>
+                            <div id="ai-response-area" className={`mt-4 flex flex-col items-center justify-center min-h-[250px] p-4 rounded-lg ${theme === 'ios' ? 'bg-black/5' : 'bg-gray-100'}`}>
                                 {error ? (
                                     <p className="text-red-500 text-center">{error}</p>
                                 ) : imageUrl ? (
@@ -151,7 +177,7 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                                                 ></div>
                                             </div>
                                             <div className="flex justify-center mt-4">
-                                                <button onClick={() => setShowMugPreview(false)} className={`py-2 px-5 rounded-full font-semibold text-sm ${isIOS ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-gray-200 text-black hover:bg-gray-300'}`}>
+                                                <button onClick={() => setShowMugPreview(false)} className={`py-2 px-5 rounded-full font-semibold text-sm ${theme === 'ios' ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-gray-200 text-black hover:bg-gray-300'}`}>
                                                     Back to Layout
                                                 </button>
                                             </div>

@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/Current_Version-0.3.2-blue" alt="Versión">
+<img src="https://img.shields.io/badge/Current_Version-0.3.3-blue" alt="Versión">
 <img src="https://img.shields.io/badge/Estado-En Desarrollo-yellowgreen" alt="Estado del Proyecto">
 <img src="https://img.shields.io/badge/License-MIT%20license-green" alt="Licencia MIT">
 </p>

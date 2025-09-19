@@ -311,49 +311,48 @@ export default function App() {
   return (
     <PayPalScriptProvider options={{ clientId: paypalClientId, currency: "USD" }}>
         <div className={`min-h-screen w-full bg-cover bg-center bg-fixed ${theme === 'ios' ? 'theme-ios' : 'theme-android'} app-background`}>
-        <div className="min-h-screen w-full bg-black/10 flex flex-col">
-            <Header theme={theme} cartItemCount={cartItemCount} onCartClick={handleCartClick}/>
-            <main className="pt-24 pb-12 lg:flex lg:flex-col lg:justify-center lg:min-h-screen flex-grow">
-            {renderStoreContent()}
-            </main>
+            <div className="min-h-screen w-full bg-black/10 flex flex-col">
+                {!selectedProduct && <Header theme={theme} cartItemCount={cartItemCount} onCartClick={handleCartClick}/>}
+                <main className={`${selectedProduct ? '' : 'pt-24'} pb-12 lg:flex lg:flex-col lg:justify-center lg:min-h-screen flex-grow ${selectedProduct && theme !== 'ios' ? 'flex items-center lg:items-start' : ''}`}>
+                {renderStoreContent()}
+                </main>
+                {!selectedProduct && <Footer theme={theme} />}
+            </div>
+                
+            <div 
+            className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${currentView === 'cart' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+            onClick={() => setCurrentView('store')}
+            >
+                <div onClick={(e) => e.stopPropagation()}>
+                <CartView 
+                    cart={cart} 
+                    onClose={() => setCurrentView('store')} 
+                    onUpdateQuantity={handleUpdateQuantity} 
+                    onCheckout={() => setCurrentView('checkout')}
+                    theme={theme} 
+                    isOpen={currentView === 'cart'}/>
+                </div>
+            </div>
+            
+            {currentView === 'checkout' && (
+                <CheckoutView 
+                    cart={cart}
+                    theme={theme}
+                    onBackToCart={() => setCurrentView('cart')}
+                    onPaymentSuccess={handlePaymentSuccess}
+                />
+            )}
 
-            <Footer theme={theme} />
+            {currentView === 'confirmation' && (
+                // FIX: Pass the 'theme' prop to OrderConfirmation as it is required.
+                <OrderConfirmation onBackToStore={() => setCurrentView('store')} theme={theme} />
+            )}
         </div>
         <AIIdeaGenerator 
             theme={theme} 
             products={products}
             onAddToCartWithDesign={handleAddToCartWithDesign}
         />
-            
-        <div 
-        className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${currentView === 'cart' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-        onClick={() => setCurrentView('store')}
-        >
-            <div onClick={(e) => e.stopPropagation()}>
-            <CartView 
-                cart={cart} 
-                onClose={() => setCurrentView('store')} 
-                onUpdateQuantity={handleUpdateQuantity} 
-                onCheckout={() => setCurrentView('checkout')}
-                theme={theme} 
-                isOpen={currentView === 'cart'}/>
-            </div>
-        </div>
-        
-        {currentView === 'checkout' && (
-            <CheckoutView 
-                cart={cart}
-                theme={theme}
-                onBackToCart={() => setCurrentView('cart')}
-                onPaymentSuccess={handlePaymentSuccess}
-            />
-        )}
-
-        {currentView === 'confirmation' && (
-            // FIX: Pass the 'theme' prop to OrderConfirmation as it is required.
-            <OrderConfirmation onBackToStore={() => setCurrentView('store')} theme={theme} />
-        )}
-        </div>
     </PayPalScriptProvider>
   );
 }
