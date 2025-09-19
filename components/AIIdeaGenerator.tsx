@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import Button from './Button';
 import './AIIdeaGenerator.css';
-// FIX: Import the global Theme type to ensure consistency.
 import type { Product, Theme } from '../types';
-
-// FIX: Removed the local Theme type definition ('ios' | 'android') to use the imported global Theme type.
 
 interface AIIdeaGeneratorProps {
     theme: Theme;
@@ -23,7 +20,6 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
             document.body.classList.remove('modal-open');
         }
 
-        // Cleanup function to remove the class when the component unmounts
         return () => {
             document.body.classList.remove('modal-open');
         };
@@ -37,6 +33,29 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
     const [isProductSelectorOpen, setIsProductSelectorOpen] = useState(false);
 
     const isIOS = theme === 'ios';
+
+    // Lógica de estilos para todos los elementos del componente
+    const fabClasses = isIOS
+        ? 'bg-white/70 backdrop-blur-[15px] border border-black/5'
+        : '!bg-[#6200EE] shadow-md hover:shadow-lg hover:bg-opacity-90';
+
+    const fabIconColor = isIOS
+        ? 'text-[--color-primary]'
+        : 'text-[--color-on-primary]';
+
+    const modalOverlayClasses = isIOS ? 'backdrop-blur-sm' : '';
+    
+    // --- AQUÍ ESTÁ LA LÓGICA CLAVE PARA ESTE ARREGLO ---
+    const modalContentClasses = isIOS
+        ? 'bg-gray-100/75 backdrop-blur-[25px] border border-white/20 rounded-2xl shadow-xl'
+        : 'bg-[--color-surface] rounded-3xl shadow-2xl';
+
+    const textColor = isIOS ? 'text-black' : 'text-[--color-on-surface]';
+    const subTextColor = isIOS ? 'text-gray-600' : 'text-[--color-on-surface-variant]';
+    const textAreaThemeClasses = isIOS
+        ? 'border-black/10 placeholder-gray-500 bg-white/80'
+        : 'border-gray-300 placeholder-gray-400 bg-white';
+
 
     const handleGenerate = async () => {
         if (!prompt) {
@@ -83,49 +102,12 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
     
     const closeModal = () => setIsModalOpen(false);
 
-    const getThemeStyles = (theme: Theme) => {
-        switch (theme) {
-            case 'ios':
-                return {
-                    fab: 'bg-white/70 backdrop-blur-[15px] border border-black/5',
-                    fabIcon: 'text-[--color-primary]',
-                    modalOverlay: 'backdrop-blur-sm',
-                    modalContent: 'bg-gray-100/75 backdrop-blur-[25px] border border-white/20 rounded-2xl shadow-xl',
-                    text: 'text-black',
-                    subText: 'text-gray-600',
-                    textArea: 'border-black/10 placeholder-gray-500 bg-white/80',
-                };
-            case 'android':
-            default:
-                return {
-                    fab: 'bg-[--color-primary] shadow-lg',
-                    fabIcon: 'text-[--color-on-primary]',
-                    modalOverlay: '',
-                    modalContent: 'bg-[--color-surface] rounded-3xl shadow-2xl',
-                    text: 'text-[--color-on-surface]',
-                    subText: 'text-[--color-on-surface-variant]',
-                    textArea: 'border-gray-300 placeholder-gray-400 bg-white',
-                };
-        }
-    };
-
-    const {
-        fab: fabClasses,
-        fabIcon: fabIconColor,
-        modalOverlay: modalOverlayClasses,
-        modalContent: modalContentClasses,
-        text: textColor,
-        subText: subTextColor,
-        textArea: textAreaThemeClasses,
-    } = getThemeStyles(theme);
-
     return (
         <>
-        
             <button 
                 id="ai-fab" 
                 onClick={() => setIsModalOpen(!isModalOpen)} 
-                className={`fixed bottom-5 right-5 z-[1999] h-14 w-14 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-105 transform-gpu ${fabClasses}`} 
+                className={`fixed bottom-5 right-5 z-[1999] h-14 w-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 transform-gpu ${fabClasses}`} 
                 aria-label="Generate design with AI"
             >
                 <div className={fabIconColor}>
@@ -204,17 +186,17 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                                 <div className="absolute inset-0 bg-white/80 backdrop-blur-md flex flex-col p-4 rounded-2xl z-20">
                                     <h3 className="text-center font-bold mb-2 text-black">Select a Product</h3>
                                     <div className="overflow-y-auto space-y-2 flex-grow">
-                                        {products.map(product => (
+                                        {products.map(p => (
                                             <button 
-                                                key={product.id} 
+                                                key={p.id} 
                                                 onClick={() => {
-                                                    onAddToCartWithDesign(product, imageUrl);
+                                                    onAddToCartWithDesign(p, imageUrl);
                                                     setIsProductSelectorOpen(false);
                                                 }}
                                                 className="w-full flex items-center p-2 rounded-lg hover:bg-gray-200/80 transition-colors text-left"
                                             >
-                                                <img src={product.imageUrl} alt={product.name} className="w-12 h-12 rounded-md mr-3 object-cover" />
-                                                <span className="font-medium text-black">{product.name}</span>
+                                                <img src={p.imageUrl} alt={p.name} className="w-12 h-12 rounded-md mr-3 object-cover" />
+                                                <span className="font-medium text-black">{p.name}</span>
                                             </button>
                                         ))}
                                     </div>
@@ -238,3 +220,4 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
 };
 
 export default AIIdeaGenerator;
+
