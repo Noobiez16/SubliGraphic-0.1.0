@@ -110,7 +110,12 @@ const CartView: React.FC<CartViewProps> = ({ cart, onClose, onUpdateQuantity, on
                                     <span className={`min-w-[20px] text-center font-medium ${textColor}`}>{item.quantity}</span>
                                     <button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)} className={quantityBtnClasses}>+</button>
                                 </div>
-                                <button onClick={() => onUpdateQuantity(item.id, 0)} className={`text-red-500/80 hover:text-red-500 ml-2`}>
+                                <button
+                                    onClick={() => onUpdateQuantity(item.id, 0)}
+                                    className={`text-red-500/80 hover:text-red-500 ml-2`}
+                                    aria-label="Remove item"
+                                    title="Remove item"
+                                >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </div>
@@ -313,13 +318,12 @@ export default function App() {
             </main>
 
             <Footer theme={theme} />
-            
-            <AIIdeaGenerator 
-                theme={theme} 
-                products={products}
-                onAddToCartWithDesign={handleAddToCartWithDesign}
-            />
         </div>
+        <AIIdeaGenerator 
+            theme={theme} 
+            products={products}
+            onAddToCartWithDesign={handleAddToCartWithDesign}
+        />
             
         <div 
         className={`fixed inset-0 bg-black/50 backdrop-blur-[8px] flex justify-center items-start lg:items-center z-[1001] pt-[10vh] px-4 pb-4 lg:p-4 transition-all duration-300 ease-in-out ${currentView === 'cart' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}

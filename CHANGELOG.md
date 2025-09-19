@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.3.3] - 2025-09-18
+
+### Added
+- **CSS Import:** Added a direct import for `AIIdeaGenerator.css` within the `AIIdeaGenerator.tsx` component to ensure styles are correctly applied.
+
+### Changed
+- **Styling Refactor:** Moved the `@keyframes spin360` animation from an inline `<style>` tag in `AIIdeaGenerator.tsx` to the external `AIIdeaGenerator.css` stylesheet, improving code organization and maintainability.
+- **Button and Price Alignment:** Updated the product card layout by changing `justify-between` to `justify-center` and adjusting the `gap` to provide more balanced and centered alignment for the price and "View" button.
+- **CSS Custom Properties:** Replaced a hardcoded inline `style` for the AI-generated mug preview with a CSS custom property (`--mug-design-image`), making the styling more dynamic and easier to manage.
+
+### Fixed
+- **iOS Stacking Context Bug:** Resolved a critical positioning issue where the AI Floating Action Button (FAB) would not remain fixed on iOS devices. The fix involved moving the `AIIdeaGenerator` component to a top-level position in the `App.tsx` DOM structure, escaping the parent stacking context.
+- **CSS Compatibility:** Addressed a browser compatibility warning by ensuring the `-webkit-mask-mode` property was included alongside `mask-mode` in `AIIdeaGenerator.css`.
+
 ## [0.3.2] - 2025-09-16
 
 ### Added

@@ -1,6 +1,6 @@
 <div align="center">
 <!-- Puedes crear un banner simple en Canva o una herramienta similar y subirlo a Imgur -->
-  <img width="2542" height="1274" alt="image" src="https://github.com/user-attachments/assets/33c1ba3d-6684-4b51-9785-50c13514368e" />
+<img width="2542" height="1274" alt="image" src="https://github.com/user-attachments/assets/33c1ba3d-6684-4b51-9785-50c13514368e" />
 <img width="444" height="960" alt="image" src="https://github.com/user-attachments/assets/e4c6f521-103f-4631-bcfc-85c2ea5c222b" />
 <img width="444" height="960" alt="image" src="https://github.com/user-attachments/assets/e9f4fb1f-35b6-41be-b7fc-b9d5ca9ad4ad" />
 
@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/Current_Version-0.3.1-blue" alt="Versión">
+<img src="https://img.shields.io/badge/Current_Version-0.3.2-blue" alt="Versión">
 <img src="https://img.shields.io/badge/Estado-En Desarrollo-yellowgreen" alt="Estado del Proyecto">
 <img src="https://img.shields.io/badge/License-MIT%20license-green" alt="Licencia MIT">
 </p>

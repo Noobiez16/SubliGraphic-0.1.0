@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import Button from './Button';
+import './AIIdeaGenerator.css';
 // FIX: Import the global Theme type to ensure consistency.
 import type { Product, Theme } from '../types';
 
@@ -94,18 +95,6 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
 
     return (
         <>
-            <style>{`
-                @keyframes spin360 {
-                    from {
-                        background-position: 0 0;
-                        mask-position: 0 0;
-                    }
-                    to {
-                        background-position: -4640px 0; 
-                        mask-position: -4640px 0;
-                    }
-                }
-             `}</style>
         
             <button 
                 id="ai-fab" 
@@ -156,7 +145,10 @@ const AIIdeaGenerator: React.FC<AIIdeaGeneratorProps> = ({ theme, products, onAd
                                             <h4 className="font-semibold text-center mb-2">360 Preview</h4>
                                             <div className="relative w-64 h-64">
                                                 <div className="absolute inset-0 w-full h-full bg-no-repeat mug-preview-sprite"></div>
-                                                <div className="absolute inset-0 w-full h-full mug-preview-design" style={{ backgroundImage: `url(${imageUrl})` }}></div>
+                                                <div 
+                                                    className="absolute inset-0 w-full h-full mug-preview-design" 
+                                                    style={{ '--mug-design-image': `url(${imageUrl})` } as React.CSSProperties}
+                                                ></div>
                                             </div>
                                             <div className="flex justify-center mt-4">
                                                 <button onClick={() => setShowMugPreview(false)} className={`py-2 px-5 rounded-full font-semibold text-sm ${isIOS ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-gray-200 text-black hover:bg-gray-300'}`}>
